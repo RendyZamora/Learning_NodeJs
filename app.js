@@ -1,22 +1,13 @@
-const readline = require("readline")
-const fs = require('fs')
-const rl = readline.createInterface(
-    {
-        input: process.stdin,
-        output: process.stdout
-    }
-)
+const contacts = require('./contacts')
 
-rl.question("masukan nama anda :", (nama) =>{
-    rl.question("masukan noHp anda :", (noHp) =>{
-        const contact = {nama, noHp}
-        const file = fs.readFileSync('data/contacts.json', "utf8");
-        const contacts = JSON.parse(file);
-        contacts.push(contact)
-        fs.writeFileSync('data/contacts.json', JSON.stringify(contacts))
+const main = async ()=>{
+    const nama= await contacts.pertanyaan("Masukan nama anda :");
+    const noHp= await contacts.pertanyaan("Masukan no Hp :");
+    const email= await contacts.pertanyaan("Masukan email anda :");
 
-        rl.close()
-    })
-})
 
-fs.writeFileSync('data/contacts.json','["Heloo World!!"]');
+    contacts.simpanContact(nama, email , noHp)
+}
+
+main()
+

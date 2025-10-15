@@ -1,72 +1,43 @@
-const yargs = require("yargs")
-const { simpanContact, listContact, detailContact, hapusContact } = require("./contacts")
+var express = require('express');
+var expressLayouts = require('express-ejs-layouts');
+const { example, describe } = require('yargs');
+const port = 3000;
 
-yargs.command({
-    command : 'add',
-    describe: 'menambahkan kontak baru',
-    builder: {
-        nama:{
-            describe: 'nama lengkap',
-            demandOption: true,
-            type : 'string'
-        },
-        email:{
-            describe: 'alamat email',
-            demandOption: true,
-            type : 'string'
-        },
-        noHp:{
-            describe: 'nomor HP',
-            demandOption: true,
-            type : 'string'
-        },
-    },
-    handler(inpt){
-        simpanContact(inpt.nama,inpt.email, inpt.noHp);
-    }
-}).demandCommand();
+var app = express();
 
-yargs.command(
+app.set('view engine', 'ejs');
+
+app.use(expressLayouts);
+app.use(express.static('public'));
+
+app.get('/', function(req, res) {
+  res.render('home', {
+    title: 'Halaman Home',
+    describe :"Selamat datang di halaman Home",
+    layout : 'layouts/main-layout'
+  });
+});
+app.get('/about', function(req, res) {
+  const mahasiswa = [
     {
-        command : 'list',
-        describe: 'menampilkan daftar identitas',
-        handler(){
-            listContact()
-        }
-    }
-)
-
-yargs.command(
-    {
-    command : 'detail',
-    describe: 'menampilkan rincian identitas berdasarkan nama',
-    builder: {
-        nama:{
-            describe: 'nama lengkap',
-            demandOption: true,
-            type : 'string'
-        }
+      'nama' : 'rendy',
+      'nim' : '098734761'
     },
-    handler(arg){
-        detailContact(arg.nama);
-    }
-    }
-)
-yargs.command(
     {
-    command : 'delete',
-    describe: 'menghapus data identitas berdasarkan nama',
-    builder: {
-        nama:{
-            describe: 'nama lengkap',
-            demandOption: true,
-            type : 'string'
-        }
+      'nama' : 'rudi',
+      'nim' : '034234761'
     },
-    handler(arg){
-        hapusContact(arg.nama);
-    }
-    }
-)
+  ]
+  res.render('about', {
+    title: 'Halaman About',
+    describe :"Selamat datang di halaman About",
+    mahasiswa,
+    layout : 'layouts/main-layout'
+  });
+});
 
-yargs.parse()
+app.use((req, res)=>{
+    res.status(404);
+    res.send('<h1>404</h1>')
+})
+app.listen(port, ()=> console.log(`Example app listening at http://localhost:${port}`));
